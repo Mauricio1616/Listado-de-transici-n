@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista Club Renacer - Espacio Corregido</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { box-sizing: border-box; }
+        @media print {
+            @page { 
+                margin: 0; 
+                size: A4 landscape; 
+            }
+            body { 
+                -webkit-print-color-adjust: exact; 
+                print-color-adjust: exact; 
+                margin: 0;
+            }
+            .page-break { page-break-after: always; }
+            .no-print { display: none; }
+        }
+
+        /* FILAS GIGANTES */
+        tr { height: 110px; } 
+        thead tr { height: 45px !important; }
+
+        .page-container {
+            height: 210mm;
+            width: 297mm;
+            padding: 0.8cm 1.2cm; /* Reducido ligeramente para dar aire */
+            overflow: hidden;
+            background-color: white;
+            margin: 0 auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-placeholder {
+            border: 1px dashed #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+        }
+    </style>
+</head>
+<body class="bg-gray-200 font-sans text-sm">
+
+    <div class="fixed bottom-5 right-5 no-print z-50">
+        <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-full shadow-2xl transition-all transform hover:scale-105 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"></path><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            IMPRIMIR LISTA
+        </button>
+    </div>
+
+    <div id="pages-container"></div>
+
+    <script>
+        // AJUSTE: 5 filas para que no choque con el pie de página
+        const totalRows = 100; 
+        const rowsPerPage = 5; 
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+        
+        const container = document.getElementById('pages-container');
+        let htmlContent = '';
+        let currentRow = 1;
+
+        for (let page = 1; page <= totalPages; page++) {
+            htmlContent += `
+            <div class="page-break page-container mb-8 shadow-2xl">
+                <!-- CABECERA -->
+                <div class="flex items-center justify-between mb-4 border-b-2 border-gray-900 pb-2">
+                    <div class="w-1/4">
+                        <div class="logo-placeholder h-24 w-full">
+                            <img src="logo.png" alt="Logo" class="h-20 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <span class="text-[10px] hidden uppercase font-bold text-center">Espacio para Logo</span>
+                        </div>
+                    </div>
+                    <div class="w-3/4 text-right">
+                        <h1 class="text-3xl font-black uppercase text-gray-900 tracking-tighter">ORIENTACIÓN PARA LA TRANSICIÓN</h1>
+                        <p class="text-xs text-gray-600 font-bold uppercase tracking-widest">REGISTRO DE MATERIAS PENDIENTES - CLUB RENACER</p>
+                    </div>
+                </div>
+
+                <!-- TABLA -->
+                <div class="flex-grow">
+                    <table class="w-full border-collapse border-[2.5px] border-gray-900 text-left text-gray-800 table-fixed">
+                        <thead class="text-[10px] font-bold uppercase bg-gray-900 text-white">
+                            <tr>
+                                <th class="border border-gray-900 px-1 w-[4%] text-center">Nº</th>
+                                <th class="border border-gray-900 px-2 w-[24%]">Nombre Completo</th>
+                                <th class="border border-gray-900 px-1 w-[10%] text-center">Registro</th>
+                                <th class="border border-gray-900 px-1 w-[6%] text-center">Sem.</th>
+                                <th class="border border-gray-900 px-2 w-[36%] bg-gray-800">Siglas de Asignaturas Pendientes</th>
+                                <th class="border border-gray-900 px-1 w-[10%] text-center">Teléfono</th>
+                                <th class="border border-gray-900 px-1 w-[10%] text-center">Firma</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            for (let r = 0; r < rowsPerPage && currentRow <= totalRows; r++) {
+                const rowClass = (currentRow % 2 !== 0) ? 'bg-white' : 'bg-gray-50';
+                
+                htmlContent += `
+                            <tr class="${rowClass}">
+                                <td class="border-[1.5px] border-gray-400 px-1 text-center font-black text-gray-300 text-lg">${currentRow}</td>
+                                <td class="border-[1.5px] border-gray-400 px-3"></td>
+                                <td class="border-[1.5px] border-gray-400 px-2"></td>
+                                <td class="border-[1.5px] border-gray-400 px-1 text-center font-bold"></td>
+                                <td class="border-[1.5px] border-gray-400 px-3 py-4"></td>
+                                <td class="border-[1.5px] border-gray-400 px-2"></td>
+                                <td class="border-[1.5px] border-gray-400 px-2"></td>
+                            </tr>
+                `;
+                currentRow++;
+            }
+
+            htmlContent += `
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- PIE DE PÁGINA (Aislado para evitar choques) -->
+                <div class="mt-2 flex justify-between items-center text-[9px] text-gray-400 font-bold border-t border-gray-100 pt-1">
+                    <div class="flex gap-4 uppercase">
+                        <span>Pág: ${page} / ${totalPages}</span>
+                        <span>Control Académico Interno</span>
+                    </div>
+                    <div>
+                        <span>EMISIÓN: ${new Date().toLocaleDateString()}</span>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        container.innerHTML = htmlContent;
+    </script>
+</body>
+</html>
